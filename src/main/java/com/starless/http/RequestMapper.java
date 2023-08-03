@@ -35,7 +35,10 @@ public class RequestMapper {
             pathParams.put(entry.getKey(), entry.getValue().get(0));
         }
 
-        T body = parseBody(ctx.getEntityStream(), type); // Parse the body to the expected type
+        T body = null;
+        if (!method.equals("GET") && !method.equals("DELETE") && !method.equals("HEAD") && !method.equals("OPTIONS")) {
+            body = parseBody(ctx.getEntityStream(), type); // Parse the body to the expected type
+        }
 
         return HttpRequest.<T>builder()
                 .body(body)
