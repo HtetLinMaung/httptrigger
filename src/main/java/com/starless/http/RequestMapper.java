@@ -9,8 +9,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.functions.HttpRequestMessage;
 
 public class RequestMapper {
 
@@ -60,4 +62,38 @@ public class RequestMapper {
             throw new RuntimeException("Failed to parse body from request", e);
         }
     }
+
+    public static <T> HttpRequest<T> map(HttpRequestMessage<Optional<T>> azureRequest) {
+        // Extracting headers from the Azure request
+        Map<String, String> headers = new HashMap<>();
+        for (Map.Entry<String, String> entry : azureRequest.getHeaders().entrySet()) {
+            headers.put(entry.getKey(), entry.getValue());
+        }
+
+        // Extracting query parameters
+        Map<String, String> queryParams = new HashMap<>();
+        for (Map.Entry<String, String> entry : azureRequest.getQueryParameters().entrySet()) {
+            queryParams.put(entry.getKey(), entry.getValue());
+        }
+
+        // Handling the body
+        T body = null;
+        if (azureRequest.getBody().isPresent()) {
+            body = azureRequest.getBody().get();
+        }
+
+        // Creating the HttpRequest
+        return HttpRequest.<T>builder()
+                .body(body)
+                .headers(headers)
+                .url(azureRequest.getUri().toString())
+                .path(azureRequest.getUri().getPath())
+                .queryParams(queryParams)
+                // Note: Azure HttpRequestMessage doesn't provide direct access to path
+                // parameters.
+                // Assuming they are already included in the "route" path.
+                .method(azureRequest.getHttpMethod().name())
+                .build();
+    }
+
 }
