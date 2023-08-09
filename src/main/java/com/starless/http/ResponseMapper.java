@@ -24,7 +24,7 @@ public class ResponseMapper {
         return responseBuilder.build();
     }
 
-    public HttpResponseMessage map(HttpResponse<?> customResponse,
+    public static HttpResponseMessage map(HttpResponse<?> customResponse,
             HttpRequestMessage<?> azureRequest) {
         HttpResponseMessage.Builder responseBuilder = azureRequest
                 .createResponseBuilder(HttpStatus.valueOf(customResponse.getStatus()));
