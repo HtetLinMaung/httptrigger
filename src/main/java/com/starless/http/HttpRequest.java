@@ -1,6 +1,8 @@
 package com.starless.http;
 
 import lombok.*;
+
+import java.util.HashMap;
 import java.util.Map;
 // import java.io.IOException;
 // import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,9 +15,12 @@ import java.util.Map;
 @Builder
 public class HttpRequest<T> {
     private T body;
-    private Map<String, String> headers;
-    private Map<String, String> queryParams;
-    private Map<String, String> pathParams;
+    @Builder.Default
+    private Map<String, String> headers = new HashMap<>();
+    @Builder.Default
+    private Map<String, String> queryParams = new HashMap<>();
+    @Builder.Default
+    private Map<String, String> pathParams = new HashMap<>();
     private String url;
     private String path;
     private String method;
