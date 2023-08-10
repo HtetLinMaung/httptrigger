@@ -20,6 +20,13 @@ public class HttpRequest<T> {
     private String path;
     private String method;
 
+    public String getQueryParamOrDefault(String key, String defaultValue) {
+        if (!queryParams.containsKey(key) || queryParams.get(key) == null || queryParams.get(key).isEmpty()) {
+            queryParams.put(key, defaultValue);
+        }
+        return queryParams.get(key);
+    }
+
     // public T getBodyDecoded() {
     // String contentType = this.headers.get("Content-Type");
 
